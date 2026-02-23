@@ -16,11 +16,7 @@ services:
 
   # ── Astro SSR -sovellus ───────────────────────────────────────────────────
   astro:
-    build:
-      context: .
-      args:
-        # Uppoaa client-bundleen build-ajassa; nginx reitittää /api/* PB:lle
-        PUBLIC_POCKETBASE_URL: https://crm.niceevents.fi
+    image: ghcr.io/djsnabu/nicecrm:latest
     restart: unless-stopped
     environment:
       HOST: "0.0.0.0"
