@@ -1,19 +1,5 @@
 services:
 
-  # ── Nginx reverse proxy ───────────────────────────────────────────────────
-  nginx:
-    image: nginx:alpine
-    restart: unless-stopped
-    ports:
-      - "3080:80"        # Portainerissa: ulkoinen portti → sisäinen 80
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - astro
-      - pocketbase
-    networks:
-      - crm
-
   # ── Astro SSR -sovellus ───────────────────────────────────────────────────
   astro:
     image: ghcr.io/djsnabu/nicecrm:latest
@@ -23,8 +9,6 @@ services:
       PORT: "4321"
     depends_on:
       - pocketbase
-    networks:
-      - crm
 
   # ── PocketBase ────────────────────────────────────────────────────────────
   pocketbase:
@@ -32,13 +16,6 @@ services:
     restart: unless-stopped
     volumes:
       - pb_data:/pb/pb_data
-    networks:
-      - crm
-    # Ei julkisteta porttia ulospäin — nginx hoitaa liikenteen
 
 volumes:
   pb_data:
-
-networks:
-  crm:
-    driver: bridge
