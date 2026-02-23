@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LogoutButton from '../../components/LogoutButton';
+import ThemeToggle from '../../components/ThemeToggle';
+import Raportit from '../../components/Raportit';
+---
+<BaseLayout title="Raportit – NiceCRM">
+  <main class="min-h-screen p-6">
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div>
+        <h1 class="text-2xl font-bold neon-text-cyan">Raportit</h1>
+        <p class="text-slate-muted text-sm">Myyntitilastot ja analytiikka</p>
+      </div>
+      <nav class="flex items-center gap-3">
+        <a
+          href="/dashboard"
+          class="text-sm text-slate-muted hover:text-[var(--color-neon-cyan)] transition-colors"
+        >
+          Yhteenveto
+        </a>
+        <a
+          href="/dashboard/raportit"
+          class="text-sm text-[var(--color-neon-cyan)] border-b border-[var(--color-neon-cyan)]/50 pb-0.5"
+        >
+          Raportit
+        </a>
+        <ThemeToggle client:load />
+        <LogoutButton client:load />
+      </nav>
+    </header>
+    <Raportit client:load />
+  </main>
+</BaseLayout>

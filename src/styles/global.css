@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #0d0d0d;
+  --color-surface: rgba(22, 22, 22, 0.92);
+  --color-surface-border: rgba(255, 255, 255, 0.08);
+  --color-neon-cyan: #D4364E;
+  --color-neon-magenta: #E8607A;
+  --color-neon-green: #4ade80;
+  --color-slate-light: #f1f1f1;
+  --color-slate-muted: #8a8a8a;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+/* Tumma teema (oletus) */
+:root {
+  --canvas: #0d0d0d;
+  --surface: rgba(22, 22, 22, 0.92);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #f1f1f1;
+  --text-muted: #8a8a8a;
+  --accent: #D4364E;
+  --accent-alt: #E8607A;
+  --accent-green: #4ade80;
+  --input-bg: rgba(0, 0, 0, 0.35);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+}
+
+/* Vaalea teema */
+:root[data-theme="light"] {
+  --canvas: #f0f0f0;
+  --surface: rgba(255, 255, 255, 0.97);
+  --surface-border: rgba(0, 0, 0, 0.09);
+  --text-primary: #111111;
+  --text-muted: #555555;
+  --accent: #D4364E;
+  --accent-alt: #B02030;
+  --accent-green: #16803d;
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --input-border: rgba(0, 0, 0, 0.15);
+  --card-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.06), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Tailwind color overrides for light mode */
+  --color-canvas: #f0f0f0;
+  --color-surface: rgba(255, 255, 255, 0.97);
+  --color-surface-border: rgba(0, 0, 0, 0.09);
+  --color-neon-cyan: #D4364E;
+  --color-neon-magenta: #B02030;
+  --color-neon-green: #16803d;
+  --color-slate-light: #111111;
+  --color-slate-muted: #555555;
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  body {
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}
+
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+}
+
+.glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: var(--card-shadow);
+}
+
+.neon-border-cyan {
+  box-shadow: 0 0 16px rgba(212, 54, 78, 0.1);
+  border-color: rgba(212, 54, 78, 0.3) !important;
+}
+
+.neon-text-cyan {
+  color: var(--accent);
+}
+
+.neon-text-magenta {
+  color: var(--accent-alt);
+}
+
+.text-slate-light {
+  color: var(--text-primary);
+}
+
+.text-slate-muted {
+  color: var(--text-muted);
+}
+
+/* Input-kenttien teemanmuutos */
+:root[data-theme="light"] input,
+:root[data-theme="light"] select,
+:root[data-theme="light"] textarea {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--text-primary) !important;
+}
+
+:root[data-theme="light"] input::placeholder,
+:root[data-theme="light"] textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+:root[data-theme="light"] option {
+  background: #ffffff;
+  color: #111111;
+}
+
+/* Taustavärit vaaleassa tilassa */
+:root[data-theme="light"] .bg-black\/30,
+:root[data-theme="light"] .bg-black\/20,
+:root[data-theme="light"] .bg-black\/10 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+:root[data-theme="light"] .border-white\/5,
+:root[data-theme="light"] .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
