@@ -17,14 +17,18 @@ export interface Asiakas {
   updated: string;
 }
 
+export type ProjektiStatus = 'Uusi' | 'Yhteydenotto' | 'Tarjous' | 'Neuvottelu' | 'Voitettu' | 'Hävinnyt';
+
 export interface Projekti {
   id: string;
   name: string;
   hinta: number;
   deadline: string;
   asiakas: string;
+  status: ProjektiStatus;
   created: string;
   updated: string;
+  expand?: { asiakas: Asiakas };
 }
 
 export interface Aktiviteetti {

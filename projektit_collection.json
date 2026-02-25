@@ -1,0 +1,19 @@
+{
+  "id": "projektit00001",
+  "name": "projektit",
+  "type": "base",
+  "system": false,
+  "fields": [
+    { "id": "pr_name",     "name": "name",     "type": "text",   "system": false, "required": true,  "presentable": true,  "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+    { "id": "pr_hinta",    "name": "hinta",    "type": "number", "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "noDecimal": false },
+    { "id": "pr_deadline", "name": "deadline", "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+    { "id": "pr_asiakas",  "name": "asiakas",  "type": "relation", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "collectionId": "asiakkaat00001", "cascadeDelete": false },
+    { "id": "pr_status",   "name": "status",   "type": "select", "system": false, "required": true, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Uusi", "Yhteydenotto", "Tarjous", "Neuvottelu", "Voitettu", "Hävinnyt"] }
+  ],
+  "indexes": [],
+  "listRule": "",
+  "viewRule": "",
+  "createRule": "",
+  "updateRule": "",
+  "deleteRule": ""
+}
