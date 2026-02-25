@@ -3,17 +3,29 @@ import { ClientResponseError } from 'pocketbase';
 import { getPocketBase } from '@/lib/pocketbase';
 
 const STATUSES = { idle: 'idle', loading: 'loading', error: 'error', success: 'success' } as const;
+const AUTH_STORAGE_KEY = 'nicecrm.authMode';
+const DEFAULT_AUTH_MODE = (import.meta.env.PUBLIC_POCKETBASE_AUTH ?? 'users').toLowerCase();
+
+type AuthMode = 'users' | '_superusers';
 
 function getAuthErrorMessage(err: unknown): string {
   if (err instanceof ClientResponseError) {
     const msg = err.response?.message ?? err.message;
     if (err.status === 0) return 'Yhteys epäonnistui (CORS/väärä osoite/SSL). Käytä http:// eikä https:// .env:ssä jos PocketBase ei käy TLS:ää.';
     if (err.status === 404) return 'Kirjautumispolku ei löydy (404). Tarkista että PocketBase on käynnissä ja PUBLIC_POCKETBASE_URL on oikein.';
-    if (err.status === 400 || err.status === 401) return msg || 'Väärä sähköposti tai salasana.';
+    if (err.status === 400 || err.status === 401) return msg || 'Väärä sähköposti tai salasana (tai väärä rooli valittuna).';
     return msg || `Virhe ${err.status}`;
   }
   if (err && typeof err === 'object' && 'message' in err) return String((err as Error).message);
   return 'Kirjautuminen epäonnistui.';
+}
+
+function getInitialAuthMode(): AuthMode {
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
+    if (stored === 'users' || stored === '_superusers') return stored;
+  }
+  return DEFAULT_AUTH_MODE === '_superusers' ? '_superusers' : 'users';
 }
 
 export default function LoginForm() {
@@ -22,6 +34,7 @@ export default function LoginForm() {
   const [status, setStatus] = useState<keyof typeof STATUSES>('idle');
   const [message, setMessage] = useState('');
   const [connectionOk, setConnectionOk] = useState<boolean | null>(null);
+  const [authMode, setAuthMode] = useState<AuthMode>(getInitialAuthMode);
 
   useEffect(() => {
     const pb = getPocketBase();
@@ -32,18 +45,19 @@ export default function LoginForm() {
       .catch(() => setConnectionOk(false));
   }, []);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(AUTH_STORAGE_KEY, authMode);
+  }, [authMode]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus('loading');
     setMessage('');
     const pb = getPocketBase();
-    const authMode = (import.meta.env.PUBLIC_POCKETBASE_AUTH ?? 'admin').toLowerCase();
     try {
-      if (authMode === 'users') {
-        await pb.collection('users').authWithPassword(email, password);
-      } else {
-        await pb.collection('_superusers').authWithPassword(email, password);
-      }
+      const collection = authMode === '_superusers' ? '_superusers' : 'users';
+      await pb.collection(collection).authWithPassword(email, password);
       setStatus('success');
       window.location.href = '/dashboard';
     } catch (err: unknown) {
@@ -56,6 +70,7 @@ export default function LoginForm() {
           message: err.message,
           response: err.response,
           baseUrl: pb.baseUrl,
+          authMode,
         });
       } else {
         console.error('[NiceCRM] Kirjautumisvirhe:', err);
@@ -70,6 +85,23 @@ export default function LoginForm() {
     >
       <h2 className="text-xl font-semibold neon-text-cyan">Kirjaudu</h2>
       <p className="text-xs text-slate-muted break-all">API: {getPocketBase().baseUrl}</p>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="auth-mode" className="text-sm text-slate-muted">Kirjaudu roolilla</label>
+        <select
+          id="auth-mode"
+          value={authMode}
+          onChange={(e) => setAuthMode((e.target as HTMLSelectElement).value === '_superusers' ? '_superusers' : 'users')}
+          className="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-slate-light focus:outline-none focus:ring-2 focus:ring-[var(--color-neon-cyan)] focus:border-transparent"
+        >
+          <option value="users">Käyttäjä (asiakkuudet)</option>
+          <option value="_superusers">Admin (PocketBase)</option>
+        </select>
+        <p className="text-xs text-slate-muted">
+          Admin-rooli vaatii erillisen tunnuksen. Valitse käyttäjärooli ellei admin-oikeuksia tarvita.
+        </p>
+      </div>
+
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className="text-sm text-slate-muted">Sähköposti</label>
         <input
@@ -102,7 +134,13 @@ export default function LoginForm() {
       )}
       {connectionOk === true && (
         <p className="text-xs text-slate-muted">
-          Yhteys PocketBaseen OK. Jos kirjautuminen antaa 404, välityspalvelimella ohjaa <code className="bg-black/30 px-1 rounded">/api/admins/*</code> PocketBaseen.
+          Yhteys PocketBaseen OK.
+          {authMode === '_superusers' && (
+            <>
+              {' '}
+              Admin-login vaatii, että välityspalvelin reitittää <code className="bg-black/30 px-1 rounded">/api/admins/*</code> PocketBaseen.
+            </>
+          )}
         </p>
       )}
       {message && (
