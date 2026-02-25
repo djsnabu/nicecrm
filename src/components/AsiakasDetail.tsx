@@ -234,7 +234,7 @@ export default function AsiakasDetail({ asiakasId }: Props) {
 
         {muistutusCollectionMissing && (
           <div className="text-xs text-amber-400/80 p-3 rounded-lg bg-amber-400/5 border border-amber-400/20">
-            Luo PocketBaseen kokoelma <strong>muistutukset</strong> kentillä: asiakas (text), teksti (text), paivamaara (text), tehty (bool).
+            Luo PocketBaseen kokoelma <strong>muistutukset</strong> kentillä: asiakas (relation), teksti (text), paivamaara (text), tehty (bool).
           </div>
         )}
 

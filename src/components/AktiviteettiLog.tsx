@@ -86,7 +86,7 @@ export default function AktiviteettiLog({ asiakasId }: Props) {
 
       {collectionMissing && (
         <div className="text-xs text-amber-400 p-3 rounded-lg bg-amber-400/5 border border-amber-400/20">
-          Luo PocketBaseen kokoelma <strong>aktiviteetit</strong> kentillä: asiakas (text), tyyppi (text), kuvaus (text), paivamaara (text).
+          Luo PocketBaseen kokoelma <strong>aktiviteetit</strong> kentillä: asiakas (relation), tyyppi (text), kuvaus (text), paivamaara (text).
         </div>
       )}
 

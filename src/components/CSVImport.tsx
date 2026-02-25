@@ -101,38 +101,64 @@ export default function CSVImport({ onImported, onClose }: Props) {
     }
     setImporting(true);
     const pb = getPocketBase();
-    let ok = 0;
-    let virhe = 0;
     const uudet: Asiakas[] = [];
+    const errors: { row: number; reason: string }[] = [];
 
-    for (const rivi of rivit) {
-      const data: Record<string, string> = { status: 'Uusi' };
-      mapping.forEach((kentta, i) => {
-        if (kentta === '-' || !rivi[i]) return;
-        const arvo = rivi[i].trim();
-        if (!arvo) return;
-        if (kentta === 'status') {
-          // Normalize status
-          const match = VALID_STATUSES.find(
-            (s) => s.toLowerCase() === arvo.toLowerCase()
-          );
-          data.status = match ?? 'Uusi';
-        } else {
-          data[kentta] = arvo;
+    // Batch processing helper
+    const BATCH_SIZE = 5;
+    const processBatch = async (batch: string[][], startIndex: number) => {
+      const promises = batch.map(async (rivi, batchIdx) => {
+        const originalIndex = startIndex + batchIdx;
+        const data: Record<string, string> = { status: 'Uusi' };
+        
+        mapping.forEach((kentta, i) => {
+          if (kentta === '-' || !rivi[i]) return;
+          const arvo = rivi[i].trim();
+          if (!arvo) return;
+          
+          if (kentta === 'status') {
+            const match = VALID_STATUSES.find(
+              (s) => s.toLowerCase() === arvo.toLowerCase()
+            );
+            data.status = match ?? 'Uusi';
+          } else {
+            data[kentta] = arvo;
+          }
+        });
+
+        if (!data.name) {
+          errors.push({ row: originalIndex + 1, reason: 'Nimi puuttuu' });
+          return;
+        }
+
+        try {
+          const saved = await pb.collection('asiakkaat').create<Asiakas>(data);
+          uudet.push(saved);
+        } catch (err: any) {
+          errors.push({ 
+            row: originalIndex + 1, 
+            reason: err?.message || 'Tallennus epäonnistui' 
+          });
         }
       });
-      if (!data.name) { virhe++; continue; }
-      try {
-        const saved = await pb.collection('asiakkaat').create<Asiakas>(data);
-        uudet.push(saved);
-        ok++;
-      } catch {
-        virhe++;
-      }
+      
+      await Promise.all(promises);
+    };
+
+    // Process all rows in batches
+    for (let i = 0; i < rivit.length; i += BATCH_SIZE) {
+      const batch = rivit.slice(i, i + BATCH_SIZE);
+      await processBatch(batch, i);
     }
 
-    setTulos({ ok, virhe });
+    setTulos({ ok: uudet.length, virhe: errors.length });
     setImporting(false);
+    
+    if (errors.length > 0) {
+      console.error('Import errors:', errors);
+      alert(`Tuonti valmis. ${uudet.length} onnistui, ${errors.length} epäonnistui.\nKatso konsolista tarkemmat virheet.`);
+    }
+    
     if (uudet.length > 0) onImported(uudet);
   }
 

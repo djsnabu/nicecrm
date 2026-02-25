@@ -46,7 +46,7 @@
     "type": "base",
     "system": false,
     "fields": [
-      { "id": "ak_asiakas",    "name": "asiakas",    "type": "text", "system": false, "required": true,  "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+      { "id": "ak_asiakas",    "name": "asiakas",    "type": "relation", "system": false, "required": true,  "presentable": false, "hidden": false, "maxSelect": 1, "collectionId": "asiakkaat00001", "cascadeDelete": false },
       { "id": "ak_tyyppi",     "name": "tyyppi",     "type": "text", "system": false, "required": true,  "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "ak_kuvaus",     "name": "kuvaus",     "type": "text", "system": false, "required": true,  "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "ak_paivamaara", "name": "paivamaara", "type": "text", "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" }
@@ -64,7 +64,7 @@
     "type": "base",
     "system": false,
     "fields": [
-      { "id": "mu_asiakas",    "name": "asiakas",    "type": "text", "system": false, "required": true,  "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+      { "id": "mu_asiakas",    "name": "asiakas",    "type": "relation", "system": false, "required": true,  "presentable": false, "hidden": false, "maxSelect": 1, "collectionId": "asiakkaat00001", "cascadeDelete": false },
       { "id": "mu_teksti",     "name": "teksti",     "type": "text", "system": false, "required": true,  "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "mu_paivamaara", "name": "paivamaara", "type": "text", "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "mu_tehty",      "name": "tehty",      "type": "bool", "system": false, "required": false, "presentable": false, "hidden": false }
