@@ -32,4 +32,4 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
           build-args: |
-            PUBLIC_POCKETBASE_URL=https://pb.crm.niceevents.fi
+            PUBLIC_POCKETBASE_URL=https://pb.niceevents.fi
