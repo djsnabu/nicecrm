@@ -8,7 +8,7 @@ interface Props {
   onClose: () => void;
 }
 
-type CRMKentta = 'name' | 'ytunnus' | 'email' | 'phone' | 'status' | 'segmentti' | 'lahde' | 'kaupunki' | 'toimiala' | '-';
+type CRMKentta = 'name' | 'ytunnus' | 'email' | 'phone' | 'status' | 'segmentti' | 'lahde' | 'kaupunki' | 'toimiala' | 'lisatiedot' | '-';
 
 const CRM_KENTAT: { value: CRMKentta; label: string }[] = [
   { value: '-', label: '— Ohita —' },
@@ -21,6 +21,7 @@ const CRM_KENTAT: { value: CRMKentta; label: string }[] = [
   { value: 'lahde', label: 'Lähde' },
   { value: 'kaupunki', label: 'Kaupunki' },
   { value: 'toimiala', label: 'Toimiala' },
+  { value: 'lisatiedot', label: 'Lisätiedot' },
 ];
 
 const VALID_STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Häviö'];
@@ -36,6 +37,7 @@ function arvaKentta(otsikko: string): CRMKentta {
   if (/^(l.hde|lahde|source|kanava)$/.test(o)) return 'lahde';
   if (/^(kaupunki|city|paikkakunta|kunta)$/.test(o)) return 'kaupunki';
   if (/^(toimiala|industry|ala|sector)$/.test(o)) return 'toimiala';
+  if (/^(lis.tiedot|lisatiedot|notes|muistiinpano|huomio)$/.test(o)) return 'lisatiedot';
   return '-';
 }
 

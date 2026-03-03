@@ -13,7 +13,8 @@
       { "id": "as_segmentti", "name": "segmentti", "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["A-ryhmä", "B-ryhmä", "C-ryhmä", "Passiivinen", "Potentiaalinen"] },
       { "id": "as_lahde",     "name": "lahde",     "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Kylmäsoitto", "Suositus", "Verkkosivut", "Messut", "YTJ", "Muu", "Tuntematon"] },
       { "id": "as_kaupunki",  "name": "kaupunki",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
-      { "id": "as_toimiala",  "name": "toimiala",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" }
+      { "id": "as_toimiala",  "name": "toimiala",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+      { "id": "as_lisatiedot", "name": "lisatiedot", "type": "text", "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" }
     ],
     "indexes": [
       "CREATE UNIQUE INDEX idx_asiakkaat_ytunnus ON asiakkaat (ytunnus) WHERE ytunnus != ''"

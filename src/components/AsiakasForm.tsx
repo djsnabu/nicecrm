@@ -26,6 +26,7 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
   const [lahde, setLahde] = useState<string>(asiakas?.lahde ?? '');
   const [kaupunki, setKaupunki] = useState(asiakas?.kaupunki ?? '');
   const [toimiala, setToimiala] = useState(asiakas?.toimiala ?? '');
+  const [lisatiedot, setLisatiedot] = useState(asiakas?.lisatiedot ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,6 +41,7 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
     if (lahde) data.lahde = lahde;
     if (kaupunki) data.kaupunki = kaupunki;
     if (toimiala) data.toimiala = toimiala;
+    if (lisatiedot) data.lisatiedot = lisatiedot;
     try {
       let saved: Asiakas;
       if (asiakas?.id) {
@@ -155,6 +157,16 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
               ))}
             </select>
           </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-muted">Lisätiedot</label>
+          <textarea
+            value={lisatiedot}
+            onInput={(e) => setLisatiedot((e.target as HTMLTextAreaElement).value)}
+            rows={3}
+            placeholder="Vapaamuotoisia muistiinpanoja asiakkaasta..."
+            className={inputClass}
+          />
         </div>
         {error && <p className="text-sm text-red-400">{error}</p>}
         <div className="flex gap-2 mt-1">
