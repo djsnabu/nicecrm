@@ -60,7 +60,7 @@ function CustomerCard({
       <div className="flex gap-3 mt-2">
         {asiakas.ytunnus && (
           <a
-            href={`https://www.ytj.fi/fi/yritystiedot/${asiakas.ytunnus}`}
+            href={`https://tietopalvelu.ytj.fi/yritys/${asiakas.ytunnus}`}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}

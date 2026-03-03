@@ -194,7 +194,7 @@ export default function AsiakasDetail({ asiakasId }: Props) {
           <div className="flex gap-2 shrink-0 flex-wrap justify-end">
             {asiakas.ytunnus && (
               <a
-                href={`https://www.ytj.fi/fi/yritystiedot/${asiakas.ytunnus}`}
+                href={`https://tietopalvelu.ytj.fi/yritys/${asiakas.ytunnus}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] border border-[var(--color-neon-green)]/30 hover:bg-[var(--color-neon-green)]/20 transition-colors"
