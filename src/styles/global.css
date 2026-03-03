@@ -133,3 +133,24 @@
 :root[data-theme="light"] .border-white\/10 {
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
+
+/* Mobiili: isommat fontit ja parempi luettavuus */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+  .glass-card {
+    padding: 0.875rem;
+  }
+  .text-xs {
+    font-size: 0.8125rem !important;
+    line-height: 1.4 !important;
+  }
+  .text-sm {
+    font-size: 0.9375rem !important;
+    line-height: 1.5 !important;
+  }
+  main {
+    padding: 1rem !important;
+  }
+}
