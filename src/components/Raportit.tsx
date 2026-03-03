@@ -32,11 +32,11 @@ export default function Raportit() {
 
   // Hit rate
   const won = asiakkaat.filter((a) => a.status === 'Kauppa').length;
-  const lost = asiakkaat.filter((a) => a.status === 'Hävisi').length;
+  const lost = asiakkaat.filter((a) => a.status === 'Häviö').length;
   const hitRate = won + lost > 0 ? Math.round((won / (won + lost)) * 100) : null;
 
   // Pipeline by stage
-  const stages = ['Uusi', 'Tarjous', 'Kauppa', 'Hävisi'] as const;
+  const stages = ['Uusi', 'Tarjous', 'Kauppa', 'Häviö'] as const;
   const byStage = stages.map((status) => ({
     status,
     count: asiakkaat.filter((a) => a.status === status).length,
@@ -46,7 +46,7 @@ export default function Raportit() {
     Uusi: 'var(--color-neon-cyan)',
     Tarjous: 'var(--color-neon-magenta)',
     Kauppa: 'var(--color-neon-green)',
-    Hävisi: '#f87171',
+    Häviö: '#f87171',
   };
 
   // Pipeline value (Uusi + Tarjous customers)

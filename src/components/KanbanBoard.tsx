@@ -9,7 +9,7 @@ const COLUMNS: { id: AsiakasStatus; label: string; color: string }[] = [
   { id: 'Uusi', label: 'Uusi', color: 'var(--color-neon-cyan)' },
   { id: 'Tarjous', label: 'Tarjous', color: 'var(--color-neon-magenta)' },
   { id: 'Kauppa', label: 'Kauppa', color: 'var(--color-neon-green)' },
-  { id: 'Hävisi', label: 'Hävisi', color: '#f87171' },
+  { id: 'Häviö', label: 'Häviö', color: '#f87171' },
 ];
 
 const SEGMENTIT: AsiakasSegmentti[] = ['A-ryhmä', 'B-ryhmä', 'C-ryhmä', 'Passiivinen', 'Potentiaalinen'];
@@ -58,6 +58,17 @@ function CustomerCard({
         </p>
       )}
       <div className="flex gap-3 mt-2">
+        {asiakas.ytunnus && (
+          <a
+            href={`https://www.ytj.fi/fi/yritystiedot/${asiakas.ytunnus}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-xs text-[var(--color-neon-green)] hover:opacity-80 transition-opacity"
+          >
+            YTJ
+          </a>
+        )}
         <button
           onClick={() => onEdit(asiakas)}
           className="text-xs text-[var(--color-neon-magenta)] hover:opacity-80 transition-opacity"

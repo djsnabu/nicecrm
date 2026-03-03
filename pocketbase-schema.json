@@ -9,7 +9,7 @@
       { "id": "as_ytunnus",   "name": "ytunnus",   "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "as_email",     "name": "email",     "type": "email",  "system": false, "required": false, "presentable": false, "hidden": false, "exceptDomains": [], "onlyDomains": [] },
       { "id": "as_phone",     "name": "phone",     "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
-      { "id": "as_status",    "name": "status",    "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Uusi", "Tarjous", "Kauppa", "Hävisi"] },
+      { "id": "as_status",    "name": "status",    "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Uusi", "Tarjous", "Kauppa", "Häviö"] },
       { "id": "as_segmentti", "name": "segmentti", "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["A-ryhmä", "B-ryhmä", "C-ryhmä", "Passiivinen", "Potentiaalinen"] },
       { "id": "as_lahde",     "name": "lahde",     "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Kylmäsoitto", "Suositus", "Verkkosivut", "Messut", "YTJ", "Muu", "Tuntematon"] },
       { "id": "as_kaupunki",  "name": "kaupunki",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },

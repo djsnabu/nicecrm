@@ -1,4 +1,4 @@
-export type AsiakasStatus = 'Uusi' | 'Tarjous' | 'Kauppa' | 'Hävisi';
+export type AsiakasStatus = 'Uusi' | 'Tarjous' | 'Kauppa' | 'Häviö';
 export type AsiakasSegmentti = 'A-ryhmä' | 'B-ryhmä' | 'C-ryhmä' | 'Passiivinen' | 'Potentiaalinen';
 export type AsiakasLahde = 'Kylmäsoitto' | 'Suositus' | 'Verkkosivut' | 'Messut' | 'YTJ' | 'Muu' | 'Tuntematon';
 export type AktiviteettiTyyppi = 'Puhelu' | 'Sähköposti' | 'Muistiinpano' | 'Tapaaminen';

@@ -23,7 +23,7 @@ const CRM_KENTAT: { value: CRMKentta; label: string }[] = [
   { value: 'toimiala', label: 'Toimiala' },
 ];
 
-const VALID_STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Hävisi'];
+const VALID_STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Häviö'];
 
 function arvaKentta(otsikko: string): CRMKentta {
   const o = otsikko.toLowerCase().trim();

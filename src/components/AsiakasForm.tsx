@@ -3,7 +3,7 @@ import Modal from './Modal';
 import { getPocketBase } from '@/lib/pocketbase';
 import type { Asiakas, AsiakasLahde, AsiakasSegmentti, AsiakasStatus } from '@/lib/types';
 
-const STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Hävisi'];
+const STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Häviö'];
 const SEGMENTIT: AsiakasSegmentti[] = ['A-ryhmä', 'B-ryhmä', 'C-ryhmä', 'Passiivinen', 'Potentiaalinen'];
 const LAHTEET: AsiakasLahde[] = ['Kylmäsoitto', 'Suositus', 'Verkkosivut', 'Messut', 'YTJ', 'Muu', 'Tuntematon'];
 

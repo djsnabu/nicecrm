@@ -144,7 +144,7 @@ export default function AsiakasDetail({ asiakasId }: Props) {
     Uusi: 'text-[var(--color-neon-cyan)]',
     Tarjous: 'text-[var(--color-neon-magenta)]',
     Kauppa: 'text-[var(--color-neon-green)]',
-    Hävisi: 'text-red-400',
+    Häviö: 'text-red-400',
   };
 
   const avoimet = muistutukset.filter((m) => !m.tehty);
@@ -192,6 +192,16 @@ export default function AsiakasDetail({ asiakasId }: Props) {
             </div>
           </div>
           <div className="flex gap-2 shrink-0 flex-wrap justify-end">
+            {asiakas.ytunnus && (
+              <a
+                href={`https://www.ytj.fi/fi/yritystiedot/${asiakas.ytunnus}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] border border-[var(--color-neon-green)]/30 hover:bg-[var(--color-neon-green)]/20 transition-colors"
+              >
+                YTJ
+              </a>
+            )}
             <button
               onClick={() => setShowSahkoposti(true)}
               className="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-neon-cyan)]/10 text-[var(--color-neon-cyan)] border border-[var(--color-neon-cyan)]/30 hover:bg-[var(--color-neon-cyan)]/20 transition-colors"
