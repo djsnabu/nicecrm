@@ -167,6 +167,7 @@ export default function AsiakasDetail({ asiakasId }: Props) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold neon-text-cyan mb-1">{asiakas.name}</h1>
+            {asiakas.ytunnus && <p className="text-slate-muted text-sm">Y-tunnus: {asiakas.ytunnus}</p>}
             {asiakas.email && <p className="text-slate-muted text-sm">{asiakas.email}</p>}
             {asiakas.phone && <p className="text-slate-muted text-sm">{asiakas.phone}</p>}
             {(asiakas.kaupunki || asiakas.toimiala) && (

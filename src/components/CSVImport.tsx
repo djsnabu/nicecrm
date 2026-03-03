@@ -8,11 +8,12 @@ interface Props {
   onClose: () => void;
 }
 
-type CRMKentta = 'name' | 'email' | 'phone' | 'status' | 'segmentti' | 'lahde' | 'kaupunki' | 'toimiala' | '-';
+type CRMKentta = 'name' | 'ytunnus' | 'email' | 'phone' | 'status' | 'segmentti' | 'lahde' | 'kaupunki' | 'toimiala' | '-';
 
 const CRM_KENTAT: { value: CRMKentta; label: string }[] = [
   { value: '-', label: '— Ohita —' },
   { value: 'name', label: 'Nimi *' },
+  { value: 'ytunnus', label: 'Y-tunnus' },
   { value: 'email', label: 'Sähköposti' },
   { value: 'phone', label: 'Puhelin' },
   { value: 'status', label: 'Tila' },
@@ -27,6 +28,7 @@ const VALID_STATUSES: AsiakasStatus[] = ['Uusi', 'Tarjous', 'Kauppa', 'Hävisi']
 function arvaKentta(otsikko: string): CRMKentta {
   const o = otsikko.toLowerCase().trim();
   if (/^(nimi|name|yritys|company|asiakas|firma)$/.test(o)) return 'name';
+  if (/^(y.tunnus|ytunnus|business.?id|bis)$/.test(o)) return 'ytunnus';
   if (/^(s.hk.posti|email|mail|e-mail|sposti)$/.test(o)) return 'email';
   if (/^(puhelin|phone|tel|puh|gsm|numero)$/.test(o)) return 'phone';
   if (/^(tila|status|vaihe|stage)$/.test(o)) return 'status';

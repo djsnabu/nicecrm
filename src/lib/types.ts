@@ -6,6 +6,7 @@ export type AktiviteettiTyyppi = 'Puhelu' | 'Sähköposti' | 'Muistiinpano' | 'T
 export interface Asiakas {
   id: string;
   name: string;
+  ytunnus?: string;
   email: string;
   phone: string;
   status: AsiakasStatus;

@@ -3,6 +3,7 @@ import { getPocketBase, isAuthenticated } from '@/lib/pocketbase';
 import type { Asiakas, AsiakasSegmentti, AsiakasStatus } from '@/lib/types';
 import AsiakasForm from './AsiakasForm';
 import CSVImport from './CSVImport';
+import PRHImport from './PRHImport';
 
 const COLUMNS: { id: AsiakasStatus; label: string; color: string }[] = [
   { id: 'Uusi', label: 'Uusi', color: 'var(--color-neon-cyan)' },
@@ -48,6 +49,7 @@ function CustomerCard({
       >
         {asiakas.name}
       </a>
+      {asiakas.ytunnus && <p className="text-xs text-slate-muted">{asiakas.ytunnus}</p>}
       <p className="text-xs text-slate-muted truncate">{asiakas.email}</p>
       {asiakas.phone && <p className="text-xs text-slate-muted">{asiakas.phone}</p>}
       {asiakas.segmentti && (
@@ -83,6 +85,7 @@ export default function KanbanBoard() {
   const [dragOverCol, setDragOverCol] = useState<AsiakasStatus | null>(null);
   const [filterSegmentti, setFilterSegmentti] = useState<string>('');
   const [showCSV, setShowCSV] = useState(false);
+  const [showPRH, setShowPRH] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -170,6 +173,12 @@ export default function KanbanBoard() {
             ))}
           </select>
           <button
+            onClick={() => setShowPRH(true)}
+            className="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] border border-[var(--color-neon-green)]/30 hover:bg-[var(--color-neon-green)]/20 hover:border-[var(--color-neon-green)]/50 transition-colors"
+          >
+            PRH-haku
+          </button>
+          <button
             onClick={() => setShowCSV(true)}
             className="text-sm px-3 py-1.5 rounded-lg bg-white/5 text-slate-muted border border-white/10 hover:border-white/20 hover:text-slate-light transition-colors"
           >
@@ -239,6 +248,12 @@ export default function KanbanBoard() {
         <CSVImport
           onImported={(uudet) => setCustomers((prev) => [...prev, ...uudet])}
           onClose={() => setShowCSV(false)}
+        />
+      )}
+      {showPRH && (
+        <PRHImport
+          onImported={(uudet) => setCustomers((prev) => [...prev, ...uudet])}
+          onClose={() => setShowPRH(false)}
         />
       )}
     </>

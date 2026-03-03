@@ -18,6 +18,7 @@ interface Props {
 
 export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
   const [name, setName] = useState(asiakas?.name ?? '');
+  const [ytunnus, setYtunnus] = useState(asiakas?.ytunnus ?? '');
   const [email, setEmail] = useState(asiakas?.email ?? '');
   const [phone, setPhone] = useState(asiakas?.phone ?? '');
   const [status, setStatus] = useState<AsiakasStatus>(asiakas?.status ?? 'Uusi');
@@ -34,6 +35,7 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
     setError(null);
     const pb = getPocketBase();
     const data: Record<string, string> = { name, email, phone, status };
+    if (ytunnus) data.ytunnus = ytunnus;
     if (segmentti) data.segmentti = segmentti;
     if (lahde) data.lahde = lahde;
     if (kaupunki) data.kaupunki = kaupunki;
@@ -63,6 +65,16 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
             value={name}
             onInput={(e) => setName((e.target as HTMLInputElement).value)}
             required
+            className={inputClass}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-muted">Y-tunnus</label>
+          <input
+            type="text"
+            value={ytunnus}
+            onInput={(e) => setYtunnus((e.target as HTMLInputElement).value)}
+            placeholder="1234567-8"
             className={inputClass}
           />
         </div>
