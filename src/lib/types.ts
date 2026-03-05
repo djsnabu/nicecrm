@@ -14,6 +14,7 @@ export interface Asiakas {
   lahde?: AsiakasLahde;
   kaupunki?: string;
   toimiala?: string;
+  nettisivut?: string;
   lisatiedot?: string;
   created: string;
   updated: string;

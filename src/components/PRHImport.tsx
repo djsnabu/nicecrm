@@ -21,6 +21,16 @@ function todayISO(): string {
 
 const BATCH_SIZE = 5;
 
+/** Yhdistetty nettisivutieto: PRH:sta tai DNS-tarkistuksesta */
+interface WebsiteInfo {
+  /** PRH:sta saatu URL */
+  prh: string;
+  /** DNS-tarkistuksesta löytynyt domain */
+  dns: string | null;
+  /** Tarkistus käynnissä */
+  checking: boolean;
+}
+
 export default function PRHImport({ onImported, onClose }: Props) {
   const [startDate, setStartDate] = useState(daysAgoISO(7));
   const [endDate, setEndDate] = useState(todayISO());
@@ -32,10 +42,29 @@ export default function PRHImport({ onImported, onClose }: Props) {
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ ok: number; skip: number; fail: number } | null>(null);
+  const [websiteMap, setWebsiteMap] = useState<Record<string, WebsiteInfo>>({});
+  const [dnsChecked, setDnsChecked] = useState(false);
+
+  /** Onko leadilla nettisivut (PRH tai DNS) */
+  function hasWebsite(lead: PRHLead): boolean {
+    if (lead.nettisivut) return true;
+    const info = websiteMap[lead.ytunnus];
+    if (info?.dns) return true;
+    return false;
+  }
+
+  /** Palauttaa nettisivut-URL leadille */
+  function getWebsiteUrl(lead: PRHLead): string {
+    if (lead.nettisivut) return lead.nettisivut;
+    const info = websiteMap[lead.ytunnus];
+    if (info?.dns) return `https://${info.dns}`;
+    return '';
+  }
 
   async function handleSearch() {
     setLoading(true);
     setError(null);
+    setDnsChecked(false);
     try {
       let results = await fetchPRHCompanies(startDate, endDate);
       if (kaupunkiFilter.trim()) {
@@ -43,13 +72,79 @@ export default function PRHImport({ onImported, onClose }: Props) {
         results = results.filter((r) => r.kaupunki.toLowerCase().includes(filter));
       }
       setLeads(results);
-      setSelected(new Set(results.map((r) => r.ytunnus)));
+
+      // Alusta website-map PRH-datasta
+      const wMap: Record<string, WebsiteInfo> = {};
+      results.forEach((r) => {
+        wMap[r.ytunnus] = { prh: r.nettisivut, dns: null, checking: false };
+      });
+      setWebsiteMap(wMap);
+
+      // Valitse oletuksena vain ne joilla EI ole PRH-sivuja
+      const withoutSite = results.filter((r) => !r.nettisivut);
+      setSelected(new Set(withoutSite.map((r) => r.ytunnus)));
+
       setStep('preview');
+
+      // Käynnistä DNS-tarkistus taustalla niille joilla ei ole PRH-sivuja
+      const toCheck = results.filter((r) => !r.nettisivut);
+      if (toCheck.length > 0) {
+        runDnsCheck(toCheck, wMap);
+      } else {
+        setDnsChecked(true);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Haku epäonnistui');
     } finally {
       setLoading(false);
     }
+  }
+
+  async function runDnsCheck(toCheck: PRHLead[], currentMap: Record<string, WebsiteInfo>) {
+    // Merkitse tarkistus käynnissä
+    const updatedMap = { ...currentMap };
+    toCheck.forEach((l) => {
+      updatedMap[l.ytunnus] = { ...updatedMap[l.ytunnus], checking: true };
+    });
+    setWebsiteMap({ ...updatedMap });
+
+    try {
+      const res = await fetch('/api/check-website', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ names: toCheck.map((l) => l.name) }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const dnsResults: Record<string, string | null> = data.results ?? {};
+
+        const finalMap = { ...updatedMap };
+        toCheck.forEach((lead) => {
+          const domain = dnsResults[lead.name] ?? null;
+          finalMap[lead.ytunnus] = { ...finalMap[lead.ytunnus], dns: domain, checking: false };
+        });
+        setWebsiteMap(finalMap);
+
+        // Poista DNS-löytyneet oletusvalinnasta
+        setSelected((prev) => {
+          const next = new Set(prev);
+          toCheck.forEach((lead) => {
+            if (dnsResults[lead.name]) {
+              next.delete(lead.ytunnus);
+            }
+          });
+          return next;
+        });
+      }
+    } catch {
+      // DNS-tarkistus ei ole kriittinen, jatketaan
+      const finalMap = { ...updatedMap };
+      toCheck.forEach((l) => {
+        finalMap[l.ytunnus] = { ...finalMap[l.ytunnus], checking: false };
+      });
+      setWebsiteMap(finalMap);
+    }
+    setDnsChecked(true);
   }
 
   function toggleSelect(ytunnus: string) {
@@ -69,6 +164,11 @@ export default function PRHImport({ onImported, onClose }: Props) {
     }
   }
 
+  function selectOnlyWithoutWebsite() {
+    const withoutSite = leads.filter((l) => !hasWebsite(l));
+    setSelected(new Set(withoutSite.map((r) => r.ytunnus)));
+  }
+
   async function handleImport() {
     setImporting(true);
     setError(null);
@@ -82,7 +182,7 @@ export default function PRHImport({ onImported, onClose }: Props) {
         fields: 'ytunnus',
         requestKey: null,
       });
-      existingYtunnukset = new Set(existing.map((a) => a.ytunnus).filter(Boolean));
+      existingYtunnukset = new Set(existing.map((a) => a.ytunnus).filter((y): y is string => !!y));
     } catch {
       // Jos haku epäonnistuu, jatketaan ilman duplikaattitarkistusta
     }
@@ -99,14 +199,18 @@ export default function PRHImport({ onImported, onClose }: Props) {
           return;
         }
         try {
-          const saved = await pb.collection('asiakkaat').create<Asiakas>({
+          const websiteUrl = getWebsiteUrl(lead);
+          const data: Record<string, string> = {
             name: lead.name,
             ytunnus: lead.ytunnus,
             kaupunki: lead.kaupunki,
             status: 'Uusi',
             lahde: 'YTJ',
             segmentti: 'Potentiaalinen',
-          });
+          };
+          if (websiteUrl) data.nettisivut = websiteUrl;
+
+          const saved = await pb.collection('asiakkaat').create<Asiakas>(data);
           uudet.push(saved);
           existingYtunnukset.add(lead.ytunnus);
         } catch {
@@ -121,6 +225,9 @@ export default function PRHImport({ onImported, onClose }: Props) {
     setImporting(false);
     if (uudet.length > 0) onImported(uudet);
   }
+
+  const withSiteCount = leads.filter((l) => hasWebsite(l)).length;
+  const withoutSiteCount = leads.length - withSiteCount;
 
   const inputClass =
     'px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-slate-light text-sm focus:outline-none focus:ring-1 focus:ring-[var(--color-neon-cyan)]';
@@ -210,7 +317,22 @@ export default function PRHImport({ onImported, onClose }: Props) {
               </button>
             </div>
 
-            <div className="flex items-center gap-2 text-xs">
+            {/* Nettisivut-yhteenveto */}
+            <div className="flex gap-3 text-xs">
+              <span className="px-2 py-1 rounded bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] border border-[var(--color-neon-green)]/20">
+                {withoutSiteCount} ilman sivuja
+              </span>
+              <span className="px-2 py-1 rounded bg-red-400/10 text-red-400 border border-red-400/20">
+                {withSiteCount} sivut löytyy
+              </span>
+              {!dnsChecked && (
+                <span className="px-2 py-1 rounded bg-amber-400/10 text-amber-400 border border-amber-400/20 animate-pulse">
+                  DNS-tarkistus...
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 text-xs flex-wrap">
               <label className="flex items-center gap-1.5 text-slate-muted cursor-pointer">
                 <input
                   type="checkbox"
@@ -220,32 +342,65 @@ export default function PRHImport({ onImported, onClose }: Props) {
                 />
                 Valitse kaikki
               </label>
+              <button
+                onClick={selectOnlyWithoutWebsite}
+                className="px-2 py-0.5 rounded border border-white/10 text-slate-muted hover:text-slate-light hover:border-white/20 transition-colors"
+              >
+                Vain ilman sivuja
+              </button>
             </div>
 
             <div className="max-h-[40vh] overflow-y-auto space-y-1 pr-1">
-              {leads.map((lead) => (
-                <label
-                  key={lead.ytunnus}
-                  className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
-                    selected.has(lead.ytunnus)
-                      ? 'border-[var(--color-neon-cyan)]/30 bg-[var(--color-neon-cyan)]/5'
-                      : 'border-white/5 bg-black/10 opacity-50'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected.has(lead.ytunnus)}
-                    onChange={() => toggleSelect(lead.ytunnus)}
-                    className="rounded shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-light truncate">{lead.name}</p>
-                    <p className="text-xs text-slate-muted">
-                      {lead.ytunnus} · {lead.yhtiömuoto} · {lead.kaupunki}
-                    </p>
-                  </div>
-                </label>
-              ))}
+              {leads.map((lead) => {
+                const hasSite = hasWebsite(lead);
+                const siteUrl = getWebsiteUrl(lead);
+                const info = websiteMap[lead.ytunnus];
+                const isChecking = info?.checking ?? false;
+
+                return (
+                  <label
+                    key={lead.ytunnus}
+                    className={`flex items-center gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                      selected.has(lead.ytunnus)
+                        ? 'border-[var(--color-neon-cyan)]/30 bg-[var(--color-neon-cyan)]/5'
+                        : 'border-white/5 bg-black/10 opacity-50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected.has(lead.ytunnus)}
+                      onChange={() => toggleSelect(lead.ytunnus)}
+                      className="rounded shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-slate-light truncate">{lead.name}</p>
+                        {hasSite && (
+                          <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-red-400/10 text-red-400 border border-red-400/20">
+                            Sivut
+                          </span>
+                        )}
+                        {!hasSite && !isChecking && dnsChecked && (
+                          <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-[var(--color-neon-green)]/10 text-[var(--color-neon-green)] border border-[var(--color-neon-green)]/20">
+                            Ei sivuja
+                          </span>
+                        )}
+                        {isChecking && (
+                          <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-400 animate-pulse">
+                            ...
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-muted">
+                        {lead.ytunnus} · {lead.yhtiömuoto} · {lead.kaupunki}
+                        {siteUrl && (
+                          <span className="ml-1 text-red-400/80">· {siteUrl}</span>
+                        )}
+                      </p>
+                    </div>
+                  </label>
+                );
+              })}
             </div>
 
             {error && <p className="text-sm text-red-400">{error}</p>}

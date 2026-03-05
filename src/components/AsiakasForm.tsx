@@ -26,6 +26,7 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
   const [lahde, setLahde] = useState<string>(asiakas?.lahde ?? '');
   const [kaupunki, setKaupunki] = useState(asiakas?.kaupunki ?? '');
   const [toimiala, setToimiala] = useState(asiakas?.toimiala ?? '');
+  const [nettisivut, setNettisivut] = useState(asiakas?.nettisivut ?? '');
   const [lisatiedot, setLisatiedot] = useState(asiakas?.lisatiedot ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +42,7 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
     if (lahde) data.lahde = lahde;
     if (kaupunki) data.kaupunki = kaupunki;
     if (toimiala) data.toimiala = toimiala;
+    if (nettisivut) data.nettisivut = nettisivut;
     if (lisatiedot) data.lisatiedot = lisatiedot;
     try {
       let saved: Asiakas;
@@ -95,6 +97,16 @@ export default function AsiakasForm({ asiakas, onSave, onClose }: Props) {
             type="tel"
             value={phone}
             onInput={(e) => setPhone((e.target as HTMLInputElement).value)}
+            className={inputClass}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-muted">Nettisivut</label>
+          <input
+            type="url"
+            value={nettisivut}
+            onInput={(e) => setNettisivut((e.target as HTMLInputElement).value)}
+            placeholder="https://www.esimerkki.fi"
             className={inputClass}
           />
         </div>

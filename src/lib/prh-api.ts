@@ -21,6 +21,7 @@ export interface PRHCompany {
     postCode: string;
     postOffices: { city: string; languageCode: string }[];
   }[];
+  websites: { url: string }[];
   registrationDate: string;
 }
 
@@ -32,6 +33,7 @@ export interface PRHLead {
   postinumero: string;
   kaupunki: string;
   rekisteroity: string;
+  nettisivut: string;
 }
 
 function parseCompany(c: PRHCompany): PRHLead {
@@ -58,6 +60,8 @@ function parseCompany(c: PRHCompany): PRHLead {
     kaupunki = city?.city ?? a.postOffices?.[0]?.city ?? '';
   }
 
+  const nettisivut = c.websites?.[0]?.url ?? '';
+
   return {
     ytunnus,
     name,
@@ -66,6 +70,7 @@ function parseCompany(c: PRHCompany): PRHLead {
     postinumero,
     kaupunki,
     rekisteroity: c.registrationDate ?? '',
+    nettisivut,
   };
 }
 

@@ -14,6 +14,7 @@
       { "id": "as_lahde",     "name": "lahde",     "type": "select", "system": false, "required": false, "presentable": false, "hidden": false, "maxSelect": 1, "values": ["Kylmäsoitto", "Suositus", "Verkkosivut", "Messut", "YTJ", "Muu", "Tuntematon"] },
       { "id": "as_kaupunki",  "name": "kaupunki",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
       { "id": "as_toimiala",  "name": "toimiala",  "type": "text",   "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" },
+      { "id": "as_nettisivut", "name": "nettisivut", "type": "url",  "system": false, "required": false, "presentable": false, "hidden": false, "exceptDomains": [], "onlyDomains": [] },
       { "id": "as_lisatiedot", "name": "lisatiedot", "type": "text", "system": false, "required": false, "presentable": false, "hidden": false, "min": null, "max": null, "pattern": "", "autogeneratePattern": "" }
     ],
     "indexes": [

@@ -52,6 +52,19 @@ function CustomerCard({
       {asiakas.ytunnus && <p className="text-xs text-slate-muted">{asiakas.ytunnus}</p>}
       <p className="text-xs text-slate-muted truncate">{asiakas.email}</p>
       {asiakas.phone && <p className="text-xs text-slate-muted">{asiakas.phone}</p>}
+      {asiakas.nettisivut ? (
+        <a
+          href={asiakas.nettisivut.startsWith('http') ? asiakas.nettisivut : `https://${asiakas.nettisivut}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="text-xs text-red-400/80 hover:text-red-400 transition-colors truncate block"
+        >
+          {asiakas.nettisivut.replace(/^https?:\/\//, '')}
+        </a>
+      ) : asiakas.lahde === 'YTJ' ? (
+        <p className="text-xs text-[var(--color-neon-green)]/60">Ei nettisivuja</p>
+      ) : null}
       {asiakas.segmentti && (
         <p className={`text-xs mt-1 ${segmenttiVari[asiakas.segmentti] ?? 'text-slate-muted'}`}>
           {asiakas.segmentti}

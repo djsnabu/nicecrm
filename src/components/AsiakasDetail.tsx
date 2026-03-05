@@ -170,6 +170,18 @@ export default function AsiakasDetail({ asiakasId }: Props) {
             {asiakas.ytunnus && <p className="text-slate-muted text-sm">Y-tunnus: {asiakas.ytunnus}</p>}
             {asiakas.email && <p className="text-slate-muted text-sm">{asiakas.email}</p>}
             {asiakas.phone && <p className="text-slate-muted text-sm">{asiakas.phone}</p>}
+            {asiakas.nettisivut ? (
+              <a
+                href={asiakas.nettisivut.startsWith('http') ? asiakas.nettisivut : `https://${asiakas.nettisivut}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[var(--color-neon-cyan)] hover:opacity-80 transition-opacity"
+              >
+                {asiakas.nettisivut.replace(/^https?:\/\//, '')}
+              </a>
+            ) : asiakas.lahde === 'YTJ' ? (
+              <p className="text-sm text-[var(--color-neon-green)]">Ei nettisivuja — potentiaalinen asiakas</p>
+            ) : null}
             {(asiakas.kaupunki || asiakas.toimiala) && (
               <p className="text-slate-muted text-sm">
                 {[asiakas.kaupunki, asiakas.toimiala].filter(Boolean).join(' · ')}
